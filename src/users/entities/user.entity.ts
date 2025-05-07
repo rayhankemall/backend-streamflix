@@ -1,45 +1,16 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  VersionColumn,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Entity('users')
+export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ unique: true })
+  email: string;
 
   @Column()
-  firstName: string;
+  username: string;
 
   @Column()
-  lastName: string;
-
-  @Column({ default: true })
-  isActive: boolean;
-
-  @CreateDateColumn({
-    type: 'timestamp with time zone',
-    nullable: false,
-  })
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    type: 'timestamp with time zone',
-    nullable: false,
-  })
-  updatedAt: Date;
-
-  @DeleteDateColumn({
-    type: 'timestamp with time zone',
-    nullable: true,
-  })
-  deletedAt: Date;
-
-  @VersionColumn()
-  version: number;
+  password: string;
 }
