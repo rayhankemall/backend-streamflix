@@ -82,7 +82,7 @@ module.exports = {
       'off',
       2
     ],
-    'linebreak-style': 'warn',
+    // 'linebreak-style': 'warn',
     'keyword-spacing': 'warn',
     'lines-between-class-members': 'warn',
     'no-lonely-if': 'warn',

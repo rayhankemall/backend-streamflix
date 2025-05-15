@@ -1,6 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { LoginUserDto } from '../users/dto/login-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -10,29 +12,22 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(email: string, username: string, password: string) {
-    const existingUser = await this.usersService.findByEmail(email);
-    if (existingUser) {
-      throw new ConflictException('Email sudah terdaftar');
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await this.usersService.create({
-      email,
-      username,
-      password: hashedPassword,
-    });
-    return { message: 'User berhasil dibuat', user };
+  async signup(dto: CreateUserDto) {
+    const user = await this.usersService.createUser(dto);
+    const payload = { email: user.email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
-  async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (!user) throw new UnauthorizedException('Email tidak ditemukan');
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new UnauthorizedException('Password salah');
-
-    const payload = { sub: user.id, email: user.email };
-    return { access_token: this.jwtService.sign(payload) };
+  async login(dto: LoginUserDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+      throw new UnauthorizedException('Email or password incorrect');
+    }
+    const payload = { email: user.email, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
   }
 }
