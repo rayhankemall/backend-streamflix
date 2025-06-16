@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CommentsModule } from './comments/comments.module';
 import { User } from './users/entities/user.entity';
+import { Comment } from './comments/comment.entity'; // ⬅️ Tambahkan ini
 
 @Module({
   imports: [
@@ -15,11 +17,12 @@ import { User } from './users/entities/user.entity';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User],
+      entities: [User, Comment], // ⬅️ Tambahkan Comment ke sini
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}
