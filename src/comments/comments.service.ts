@@ -10,10 +10,10 @@ export class CommentsService {
     private commentRepo: Repository<Comment>,
   ) {}
 
-  create(data: Partial<Comment>) {
-    const comment = this.commentRepo.create(data);
-    return this.commentRepo.save(comment);
-  }
+create(data: Partial<Comment>) {
+  const comment = this.commentRepo.create(data);
+  return this.commentRepo.save(comment);
+}
 
   findByMovieId(movieId: string) {
     return this.commentRepo.find({
