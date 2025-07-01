@@ -6,6 +6,9 @@ import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { User } from './users/entities/user.entity';
 import { Comment } from './comments/comment.entity'; // ⬅️ Tambahkan ini
+import { PaymentModule } from './payment/payment.module';
+import { TelegramModule } from './telegram/telegram.module';
+import { WsModule } from './ws/ws.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { Comment } from './comments/comment.entity'; // ⬅️ Tambahkan ini
     UsersModule,
     AuthModule,
     CommentsModule,
+    PaymentModule,
+    TelegramModule,
+    WsModule,
   ],
 })
 export class AppModule {}
