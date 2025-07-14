@@ -1,58 +1,59 @@
+// src/profile/profile.controller.ts
+
 import {
   Controller,
-  Get,
-  Post,
-  UseGuards,
-  UseInterceptors,
+  Put,
   UploadedFile,
-  Request,
+  UseInterceptors,
+  UseGuards,
+  Body,
+  Req,
+  Get,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import * as path from 'path';
 import { ProfileService } from './profile.service';
-import { extname } from 'path';
-import { Request as ExpressRequest } from 'express';
-
-// Tambahkan typing agar req.user.id tidak error
-interface UserRequest extends ExpressRequest {
-  user: {
-    id: string;
-    username: string;
-    email: string;
-  };
-}
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
+  // ✅ PUT /profile
+  @Put()
   @UseGuards(JwtAuthGuard)
-  @Get('me')
-  getProfile(@Request() req: UserRequest) {
-    return this.profileService.getProfile(req.user.id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('upload')
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor('profilePicture', {
       storage: diskStorage({
         destination: './uploads/profile',
-        filename: (req: ExpressRequest, file, cb) => {
-          // Cast agar bisa akses req.user.id
-          const userReq = req as UserRequest;
-          const ext = extname(file.originalname);
-          const uniqueSuffix = Date.now();
-          cb(null, `${userReq.user.id}-${uniqueSuffix}${ext}`);
+        filename: (req, file, cb) => {
+          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, unique + path.extname(file.originalname));
         },
       }),
     }),
   )
-  async uploadProfilePicture(
+  async updateProfile(
     @UploadedFile() file: Express.Multer.File,
-    @Request() req: UserRequest,
+    @Body() body: {
+      fullName: string;
+      email: string;
+      username: string;
+    },
+    @Req() req,
   ) {
-    return this.profileService.updateProfilePicture(req.user.id, file.filename);
+    return this.profileService.updateProfile(
+      req.user.id,
+      body,
+      file?.filename,
+    );
+  }
+
+  // ✅ GET /profile/me
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Req() req) {
+    return this.profileService.getProfile(req.user.id);
   }
 }

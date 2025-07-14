@@ -10,6 +10,7 @@ import { PaymentModule } from './payment/payment.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { WsModule } from './ws/ws.module';
 import { ProfileModule } from './profile/profile.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

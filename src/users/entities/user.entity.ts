@@ -14,6 +14,10 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true }) // ⬅️ ini yang ditambahkan
-  profilePicture?: string;
+@Column({ nullable: true })
+fullName?: string;
+
+ @Column({ nullable: true })
+profilePicture?: string;
+
 }

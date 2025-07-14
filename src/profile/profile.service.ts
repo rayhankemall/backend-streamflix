@@ -1,28 +1,48 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+// src/profile/profile.service.ts
+
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectRepository(User)
-    private userRepo: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
- async getProfile(id: string) {
-  const user = await this.userRepo.findOne({ where: { id } });
-  return {
-    username: user.username,
-    email: user.email,
-    profilePicture: user.profilePicture,
-  };
-}
+  async updateProfile(
+    userId: number,
+    data: { fullName: string; email: string; username: string },
+    profilePicture?: string,
+  ) {
+    const user = await this.userRepository.findOne({where: { id: String(userId) } });
+    if (!user) throw new Error('User not found');
 
- async updateProfilePicture(id: string, filename: string) {
-  const user = await this.userRepo.findOne({ where: { id } });
-  user.profilePicture = filename;
-  await this.userRepo.save(user);
-  return { message: "Profile picture updated" };
-}
+    user.fullName = data.fullName;
+    user.email = data.email;
+    user.username = data.username;
+    if (profilePicture) {
+      user.profilePicture = profilePicture;
+    }
+
+    return this.userRepository.save(user);
+  }
+
+  async getProfile(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: String(userId) },
+      select: ['id', 'email', 'username', 'fullName', 'profilePicture'],
+    });
+
+    if (!user) throw new Error('User not found');
+
+    return {
+      ...user,
+      profilePicture: user.profilePicture
+        ? `${process.env.BASE_URL}/uploads/profile/${user.profilePicture}`
+        : null,
+    };
+  }
 }
