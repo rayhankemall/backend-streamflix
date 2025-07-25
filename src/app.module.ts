@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { User } from './users/entities/user.entity';
-import { Comment } from './comments/comment.entity'; // ⬅️ Tambahkan ini
+import { Comment } from './comments/comment.entity'; 
 import { PaymentModule } from './payment/payment.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { WsModule } from './ws/ws.module';
@@ -20,7 +20,7 @@ import { ProfileModule } from './profile/profile.module';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Comment], // ⬅️ Tambahkan Comment ke sini
+      entities: [User, Comment], 
       synchronize: true,
     }),
     UsersModule,
