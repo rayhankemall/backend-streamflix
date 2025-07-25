@@ -9,7 +9,9 @@ import { Comment } from './comments/comment.entity';
 import { PaymentModule } from './payment/payment.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { WsModule } from './ws/ws.module';
+import { Profile } from './profile/entities/profile.entity';
 import { ProfileModule } from './profile/profile.module';
+import { SeederService } from './seeder/seeder.service'; // ✅ import SeederService
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,7 +22,7 @@ import { ProfileModule } from './profile/profile.module';
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, Comment], 
+      entities: [User, Comment, Profile], // ✅ Tambahkan Profile di sini
       synchronize: true,
     }),
     UsersModule,
@@ -31,5 +33,6 @@ import { ProfileModule } from './profile/profile.module';
     WsModule,
     ProfileModule,
   ],
+  providers: [SeederService], // ✅ tambahkan ini
 })
 export class AppModule {}

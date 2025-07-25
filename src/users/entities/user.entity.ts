@@ -14,6 +14,17 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ nullable: true }) // ⬅️ ini yang ditambahkan
-  profilePicture?: string;
+@Column({ nullable: true })
+fullName?: string;
+
+ @Column({ nullable: true })
+profilePicture?: string;
+
+// Status langganan
+  @Column({ default: false })
+  isSubscribed: boolean;
+
+  // Tanggal berakhir langganan (optional)
+  @Column({ type: 'timestamp', nullable: true })
+  subscriptionEnd: Date | null;
 }

@@ -14,11 +14,6 @@ export class AuthService {
 
   async signup(dto: CreateUserDto) {
     const user = await this.usersService.createUser(dto);
-    // const payload = { email: user.email, sub: user.id };
-    // return {
-    //   access_token: this.jwtService.sign(payload),
-    // };
-
     return user;
   }
 
@@ -27,9 +22,18 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Email or password incorrect');
     }
-    const payload = { email: user.email, sub: user.id, username: user.username };
+
+    const payload = { email: user.email, sub: user.id, username: user.username, isSubscribed: user.isSubscribed,};
+
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        isSubscribed: user.isSubscribed,
+        subscriptionEnd: user.subscriptionEnd,
+      },
     };
   }
 }
